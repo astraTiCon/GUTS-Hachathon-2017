@@ -14,6 +14,9 @@ class Player:
         }
         requests.post(self.url + '/api/player/turn', json=data)
 
+    def _self_info(type):
+        r = requests.get(self.url + '/api/player')
+        return json.loads(r.text)[type]
 
     def _action(self, action_type, amount):
         data = {
@@ -21,6 +24,7 @@ class Player:
             'amount': amount
         }
         requests.post(self.url + '/api/player/actions', json=data)
+
 
     def left(self, angle):
         self._turn('left', angle)
@@ -36,3 +40,14 @@ class Player:
 
     def shoot(self, amount=1):
         self._action('shoot', amount)
+
+
+    def get_position(self):
+        position = self._self_info('position')
+        position[angle] = self._self_info('angle')
+        return position
+
+
+    def get_health(self):
+        return self._self_info('health')
+
