@@ -14,12 +14,18 @@ while True:
     door_timer = max(0,door_timer - 1)
     monsters = world.get_monsters()
     for m in monsters:
-       m = Monster(m)
-       if m.shootable(str(player.get_id())) and player.looking_at(m.monster['position']):
-           player.shoot(1)
-           sleep(0.25)
-           shot = True
-           break
+        m = Monster(m)
+        if player.looking_at(m.monster['position']):
+            los = m.shootable(str(player.get_id()))
+            if(los < 0):
+                player = Player()
+                continue
+            if not los:
+                continue
+            player.shoot(1)
+            sleep(0.25)
+            shot = True
+            break
 
     if shot:
         continue
@@ -58,22 +64,12 @@ while True:
                 break
 
             angle = player.get_angle(tar.monster['position'])
-            p_angle = math.radians(player.get_position()['angle'])
             
-            degrees_right = p_angle - angle
-            if degrees_right < 0:
-                degrees_right += 2*math.pi
-            degrees_left = angle - p_angle
-            if degrees_left < 0:
-                degrees_left += 2*math.pi
+            p_angle = math.radians(player.get_position()['angle'])
 
-            degrees = min(degrees_left,degrees_right)
-            amount = max(5,degrees * 20)
-
-            if degrees_left < degrees_right:
-                player.turn_dir("left", amount)
-            else:
-                player.turn_dir("right", amount)
+            player.right(math.degrees(angle))
+            player.shoot(1)
+            
 
     doors = world.get_doors()
     for door in doors:

@@ -17,7 +17,6 @@ class World:
 		return world_objects
 
 	def get_monsters(self,distance = 2000):
-
 		world_objects = self.get_world(distance)
 		monsters = []
 		for obj in world_objects:
