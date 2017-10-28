@@ -14,7 +14,7 @@ class Player:
         }
         requests.post(self.url + '/api/player/turn', json=data)
 
-    def _self_info(type):
+    def _self_info(self, type):
         r = requests.get(self.url + '/api/player')
         return json.loads(r.text)[type]
 
@@ -44,10 +44,13 @@ class Player:
 
     def get_position(self):
         position = self._self_info('position')
-        position[angle] = self._self_info('angle')
+        position['angle'] = self._self_info('angle')
         return position
 
 
     def get_health(self):
         return self._self_info('health')
 
+
+    def get_keys(self):
+        return self._self_info('keyCards')
