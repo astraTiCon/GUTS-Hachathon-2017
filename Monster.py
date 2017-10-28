@@ -2,7 +2,7 @@ import json
 import requests
 
 class Monster:
-    def __init__(self,monster,url="http://0.0.0.0:6001"):
+    def __init__(self, monster, url="http://0.0.0.0:6001"):
         self.url = url
         self.monster = monster
 

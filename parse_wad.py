@@ -91,7 +91,7 @@ class Level(object):
             if line.is_one_sided():
                 dwg.add(dwg.line(a, b, stroke='#333', stroke_width=10))
             else:
-                dwg.add(dwg.line(a, b, stroke='#999', stroke_width=3))
+                dwg.add(dwg.line(a, b, stroke='#bada55', stroke_width=5))
 
         dwg.save()
 

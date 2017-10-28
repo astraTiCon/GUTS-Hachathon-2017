@@ -31,9 +31,8 @@ class Player:
     def right(self, angle):
         self._turn('right', angle)
 
-    def turn_dir(self, direction,amount=10):
-        self._action("turn-" + direction,amount)
-    
+    def turn_dir(self, direction, amount=10):
+        self._action("turn-" + direction, amount)
 
     def forward(self, amount=20):
         self._action('forward', amount)
@@ -88,9 +87,8 @@ class Player:
         return angle
 
     def looking_at(self, obj, error=0.05):
-        
         dx = obj['x'] - self.get_position()['x']
         dy = obj['y'] - self.get_position()['y']
         d_angle = self.get_angle_change(obj)
-        distance = math.sqrt(dx**2 + dy**2) 
+        distance = math.sqrt(dx**2 + dy**2)
         return abs(d_angle) < error * (1 + 50 / distance ** 0.65)

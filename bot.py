@@ -4,6 +4,13 @@ from Player import Player
 from time import sleep
 import math
 
+def self_remove(players):
+    p_id = player.get_id()
+    for p in players:
+        print(p)
+        if p['id'] != p_id:
+            yield p
+
 world = World()
 player = Player()
 door_open_threshold = 10
@@ -13,6 +20,7 @@ while True:
     shot = False
     door_timer = max(0,door_timer - 1)
     monsters = world.get_monsters()
+    monsters += self_remove(world.get_players())
     for m in monsters:
        m = Monster(m)
        if m.shootable(str(player.get_id())) and player.looking_at(m.monster['position']):
@@ -48,6 +56,7 @@ while True:
 
         while tar.shootable(str(player.get_id())) and not player.looking_at(tar.monster['position']):
             monsters = world.get_monsters(danger_dist * 1.2 + 100)
+            monsters += self_remove(world.get_players(danger_dist * 1.2 + 100))
             tar = None
             for m in monsters:
                 if m['id'] == target_id:
@@ -59,7 +68,7 @@ while True:
 
             angle = player.get_angle(tar.monster['position'])
             p_angle = math.radians(player.get_position()['angle'])
-            
+
             degrees_right = p_angle - angle
             if degrees_right < 0:
                 degrees_right += 2*math.pi
