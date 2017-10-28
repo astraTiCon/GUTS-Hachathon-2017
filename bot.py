@@ -7,7 +7,6 @@ import math
 def self_remove(players):
     p_id = player.get_id()
     for p in players:
-        print(p)
         if p['id'] != p_id:
             yield p
 
@@ -62,7 +61,7 @@ while True:
 
         while tar.shootable(str(player.get_id())) and not player.looking_at(tar.monster['position']):
             monsters = world.get_monsters(danger_dist * 1.2 + 100)
-            monsters += self_remove(world.get_players(danger_dist * 1.2 + 100))
+            monsters += self_remove(world.get_players())
             tar = None
             for m in monsters:
                 if m['id'] == target_id:
@@ -76,7 +75,7 @@ while True:
             p_angle = math.radians(player.get_position()['angle'])
             player.right(math.degrees(angle))
             player.shoot(1)
-            
+
 
     doors = world.get_doors()
     for door in doors:
