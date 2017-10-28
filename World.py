@@ -36,8 +36,7 @@ class World:
 		doors = json.loads(r.text)
 		return doors
 
-	def get_pickups(self,distance = 2000):
-
+	def get_pickups(self,distance=2000):
 		world_objects = get_world(distance)
 		pickups = []
 
@@ -47,3 +46,7 @@ class World:
 				pickups.append(obj)
 
 		return pickups
+
+	def get_players(self):
+		r = requests.get(self.url + '/api/players')
+		return json.loads(r.text)
