@@ -61,12 +61,12 @@ class Player:
         player_coord = self.get_position()
         dx = obj['position']['x'] - player_coord['x']
         dy = obj['position']['y'] - player_coord['y']
-        dy = dy if dy != 0 else 0.0001
-        angle = math.arctan(dx / dy)
+        dx = dx if dx != 0 else 0.0001
+        angle = math.atan(dy / dx)
 
-        if (not max(0, dy) ) and (not max(0, dx) ):
+        if (not max(0, dy)) and (not max(0, dx)):
             angle += math.pi
-        elif (not max(0, dx) ) and max(0, dy):
+        elif (not max(0, dx)) and max(0, dy):
             angle += math.pi
-
-        print(angle)
+        d_angle = angle - math.radians(player_coord['angle'])
+        return abs(d_angle) < 0.05
