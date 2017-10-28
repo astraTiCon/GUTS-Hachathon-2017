@@ -5,7 +5,7 @@ class World:
 	def __init__(self,url="http://0.0.0.0:6001"):
 		self.url = url
 
-	def get_world(self,distance = 1000):
+	def get_world(self,distance = 2000):
 
 		r = requests.get(self.url + "/api/world/objects", params = {'distance': distance})
 		if r.status_code != 200:
@@ -16,7 +16,7 @@ class World:
 
 		return world_objects
 
-	def get_monsters(self,distance = 1000):
+	def get_monsters(self,distance = 2000):
 
 		world_objects = self.get_world(distance)
 		monsters = []
@@ -37,7 +37,7 @@ class World:
 		doors = json.loads(r.text)
 		return doors
 
-	def get_pickups(self,distance = 1000):
+	def get_pickups(self,distance = 2000):
 
 		world_objects = get_world(distance)
 		pickups = []
