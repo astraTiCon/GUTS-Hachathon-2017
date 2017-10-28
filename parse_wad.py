@@ -87,6 +87,7 @@ class Level(object):
         for line in self.lines:
             a = self.normalize(self.vertices[line.a])
             b = self.normalize(self.vertices[line.b])
+            print(a, b)
             if line.is_one_sided():
                 dwg.add(dwg.line(a, b, stroke='#333', stroke_width=10))
             else:
