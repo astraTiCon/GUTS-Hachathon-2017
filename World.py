@@ -1,51 +1,43 @@
 import json
 import requests
 
+
 class World:
 	def __init__(self, url='http://0.0.0.0:6001'):
 		self.url = url
 
-	def get_world(self, distance=2000):
+	def get_monsters(self, distance=2000):
+		for obj in self._get_pickups('', 2000):
+			name = obj['type']
+			if name.isupper() and obj['health'] > 0:
+				yield obj
 
-		r = requests.get(self.url + "/api/world/objects", params = {'distance': distance})
+	def _get_pickups(self, obj_type, distance=2000):
+		data = {'distance': distance}
+		r = requests.get(self.url + "/api/world/objects", params=data)
 		if r.status_code != 200:
 			print("world/objects request error: " + r.text)
 			return {}
 
-		world_objects = json.loads(r.text)
-
-		return world_objects
-
-	def get_monsters(self, distance=2000):
-		world_objects = self.get_world(distance)
-		monsters = []
-		for obj in world_objects:
-			name = obj['type']
-			if name.isupper() and obj['health'] > 0:
-				monsters.append(obj)
-
-		return monsters
+		for obj in json.loads(r.text):
+			if obj_type in obj['type']:
+				yield obj
 
 	def get_doors(self):
 		r = requests.get(self.url + "/api/world/doors")
-
 		if r.status_code != 200:
 			print("world/doors request error: " + r.text)
 			return {}
+		return json.loads(r.text)
 
-		doors = json.loads(r.text)
-		return doors
+	def get_health(self, distance=2000):
+		return self._get_pickups('health', 2000)
 
-	def get_pickups(self,distance=2000):
-		world_objects = get_world(distance)
-		pickups = []
+	def get_armor(self, distance=2000):
+		return self._get_pickups('armor', 2000)
 
-		for obj in world_objects:
-			name = obj['type']
-			if 'armor' in name or 'health' in name:
-				pickups.append(obj)
-
-		return pickups
+	def get_ammo(self, distance=2000):
+		return self._get_pickups('ammo', 2000)
 
 	def get_players(self):
 		r = requests.get(self.url + '/api/players')

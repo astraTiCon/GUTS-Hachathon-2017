@@ -2,6 +2,7 @@ from World import World
 from Player import Player
 from time import sleep
 from random import choice
+from itertools import chain
 import math
 
 def self_remove(players):
@@ -45,8 +46,7 @@ def shoot(player, monsters, door_timer):
 
 
 def get_all_monsters(world, dist=2000):
-    monsters = world.get_monsters(dist)
-    monsters += self_remove(world.get_players())
+    monsters = chain(world.get_monsters(dist), self_remove(world.get_players()))
     return monsters
 
 def choose_target(player, targets):
