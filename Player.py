@@ -98,3 +98,12 @@ class Player:
         d_angle = self.get_angle_change(obj)
         distance = math.sqrt(dx**2 + dy**2)
         return abs(d_angle) < error * (1 + 50 / distance ** 0.65)
+
+    def can_shoot(self, monster_id):
+        player_id = str(self.get_id())
+        r = requests.get(self.url + '/api/world/los/'+ player_id +'/' + str(monster_id)) 
+        try:
+            return json.loads(r.text)['los']
+        except KeyError:
+            print('Bad ID')
+            return -1
