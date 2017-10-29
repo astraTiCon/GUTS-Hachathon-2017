@@ -38,7 +38,8 @@ def shoot(player, monsters, door_timer):
             if not los:
                 continue
             player.shoot(1)
-            choice([player.rstrafe, player.lstrafe])(38)
+            if m['distance'] > 500:
+                choice([player.rstrafe, player.lstrafe])(38)
             sleep(.1)
             shot = True
             break
@@ -48,6 +49,7 @@ def shoot(player, monsters, door_timer):
 def get_all_monsters(world, dist=2000):
     monsters = chain(world.get_monsters(dist), self_remove(world.get_players()))
     return monsters
+
 
 def choose_target(player, targets):
     best_target = targets[0]
@@ -70,16 +72,25 @@ def aim_n_shoot(player, target):
     sleep(0.1)
     player.shoot(1)
 
+
 world = World()
 player = Player()
 door_open_threshold = 10
 door_timer = 0
 
 while True:
-    monsters = list(filter(lambda x: player.can_shoot(x['id']), get_all_monsters(world)))
+    monsters = list(filter(lambda x: player.can_shoot(x['id']),
+                           get_all_monsters(world)))
     shooot, door_timer = shoot(player, monsters, door_timer)
     if shooot:
         continue
+
+    # if player.get_health() < 38:
+    #     closest = min(world.get_health(200), key=lambda x: x['distance'])
+    #     angle = player.get_angle(closest['position'])
+    #     player.right(math.degrees(angle))
+    #     player.forward(closest['distance'])
+
 
     if len(monsters) > 0:
         best_target, danger_dist = choose_target(player, monsters)
