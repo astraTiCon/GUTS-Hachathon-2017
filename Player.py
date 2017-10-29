@@ -40,6 +40,12 @@ class Player:
     def backward(self, amount=20):
         self._action('backward', amount)
 
+    def lstrafe(self, amount=20):
+        self._action('strafe-left', amount)
+
+    def rstrafe(self, amount=20):
+        self._action('strafe-right', amount)
+
     def shoot(self, amount):
         self._action('shoot', amount)
 
