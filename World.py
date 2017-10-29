@@ -2,10 +2,10 @@ import json
 import requests
 
 class World:
-	def __init__(self,url="http://0.0.0.0:6001"):
+	def __init__(self, url='http://0.0.0.0:6001'):
 		self.url = url
 
-	def get_world(self,distance = 2000):
+	def get_world(self, distance=2000):
 
 		r = requests.get(self.url + "/api/world/objects", params = {'distance': distance})
 		if r.status_code != 200:
@@ -16,12 +16,12 @@ class World:
 
 		return world_objects
 
-	def get_monsters(self,distance = 2000):
+	def get_monsters(self, distance=2000):
 		world_objects = self.get_world(distance)
 		monsters = []
 		for obj in world_objects:
 			name = obj['type']
-			if name.isupper():
+			if name.isupper() and obj['health'] > 0:
 				monsters.append(obj)
 
 		return monsters
