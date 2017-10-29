@@ -39,6 +39,8 @@ def shoot(player, monsters, door_timer, move_flag):
             if not los:
                 continue
             player.shoot(1)
+            sleep(0.05)
+            player.shoot(1)
             if m['distance'] > 500:
                 [player.rstrafe, player.lstrafe][move_flag](38)
                 move_flag = not move_flag

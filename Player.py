@@ -13,7 +13,7 @@ class Player:
             "Rocket Launcher":  5,
             "Plasma Rifle": 6,
             "BFG?": 7,
-            "Chainsaw": 8
+            "Chainsaw": 1.5
         }
 
     def _turn(self, turn_type, angle):
@@ -80,7 +80,8 @@ class Player:
         current_weapon = self._self_info('weapon') + 1
         for weapon in weapons:
             if weapon and self.weapon_damage[weapon] > current_weapon:
-                self._action('switch-weapon', self.weapon_damage[weapon])
+                self._action('switch-weapon', 
+                    self.weapon_damage[weapon] if self.weapon_damage[weapon] != 1.5 else 8)
 
     def get_angle_change(self, obj):
         angle = self.get_angle(obj)
@@ -110,7 +111,7 @@ class Player:
         dy = obj['y'] - self.get_position()['y']
         d_angle = self.get_angle_change(obj)
         distance = math.sqrt(dx**2 + dy**2)
-        return abs(d_angle) < error * (1 + 50 / distance ** 0.65)
+        return abs(d_angle) < error * (1 + 50 / distance ** 0.7)
 
     def can_shoot(self, monster_id):
         player_id = str(self.get_id())
