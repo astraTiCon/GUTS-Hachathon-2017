@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from World import World
 from Player import Player
 from time import sleep
@@ -15,8 +16,8 @@ def self_remove(players):
 def try_dooring(player, world, door_timer):
     doors = world.get_doors()
     for door in doors:
-        doorx = (door['line']['v1']['x'] + door['line']['v2']['x'])/2
-        doory = (door['line']['v1']['y'] + door['line']['v2']['y'])/2
+        doorx = (door['line']['v1']['x'] + door['line']['v2']['x']) / 2
+        doory = (door['line']['v1']['y'] + door['line']['v2']['y']) / 2
         if (door_timer == 0 and door['distance'] < 150 and
             player.looking_at({ 'x':doorx,'y':doory } ,0.3)):
             door_timer = door_open_threshold
@@ -26,7 +27,7 @@ def try_dooring(player, world, door_timer):
     return door_timer
 
 
-def shoot(player, monsters, door_timer):
+def shoot(player, monsters, door_timer, move_flag):
     shot = False
     door_timer = max(0,door_timer - 1)
     for m in monsters:
@@ -39,11 +40,12 @@ def shoot(player, monsters, door_timer):
                 continue
             player.shoot(1)
             if m['distance'] > 500:
-                choice([player.rstrafe, player.lstrafe])(38)
+                [player.rstrafe, player.lstrafe][move_flag](38)
+                move_flag = not move_flag
             sleep(.1)
             shot = True
             break
-    return shot, door_timer
+    return shot, door_timer, move_flag
 
 
 def get_all_monsters(world, dist=2000):
@@ -73,25 +75,45 @@ def aim_n_shoot(player, target):
     player.shoot(1)
 
 
+def distance(a, b):
+    return math.sqrt((a['x'] - b['x']) ** 2 + (a['y'] - b['y']) ** 2)
+
+def random_movement(n=4):
+    for _ in range(n):
+        choice([player.forward, player.backward, player.lstrafe, player.rstrafe])(20)
+
+def move_to(tar_type):
+    targets = list(world._get_pickups(tar_type, 200))
+    if not targets:
+        return
+
+    prev_pos = player.get_position()
+    target = min(targets, key=lambda x: x['distance'])
+    angle = player.get_angle(target['position'])
+    player.right(math.degrees(angle))
+    player.forward(40)
+    new_pos = player.get_position()
+    if distance(prev_pos, new_pos) < 50:
+        random_movement()
+
 world = World()
 player = Player()
 door_open_threshold = 10
 door_timer = 0
+move_flag = False
 
 while True:
     monsters = list(filter(lambda x: player.can_shoot(x['id']),
                            get_all_monsters(world)))
-    shooot, door_timer = shoot(player, monsters, door_timer)
+    shooot, door_timer, move_flag = shoot(player, monsters, door_timer, move_flag)
     if shooot:
         continue
 
-    # if player.get_health() < 38:
-    #     closest = min(world.get_health(200), key=lambda x: x['distance'])
-    #     angle = player.get_angle(closest['position'])
-    #     player.right(math.degrees(angle))
-    #     player.forward(closest['distance'])
+    move_to('armor')
+    if player.get_health() < 38:
+        move_to('health')
 
-
+    player.switch_weapon()
     if len(monsters) > 0:
         best_target, danger_dist = choose_target(player, monsters)
         aim_n_shoot(player, best_target)

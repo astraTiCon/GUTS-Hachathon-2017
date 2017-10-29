@@ -6,6 +6,15 @@ import math
 class Player:
     def __init__(self, url='http://0.0.0.0:6001'):
         self.url = url
+        self.weapon_damage = {
+            "Handgun":  2,
+            "Shotgun":  3,
+            "Chaingun": 4,
+            "Rocket Launcher":  5,
+            "Plasma Rifle": 6,
+            "BFG?": 7,
+            "Chainsaw": 8
+        }
 
     def _turn(self, turn_type, angle):
         data = {
@@ -67,16 +76,20 @@ class Player:
         self._action('use')
 
     def switch_weapon(self):
-        self._action('switch-weapon')
+        weapons = self._self_info('weapons')
+        current_weapon = self._self_info('weapon') + 1
+        for weapon in weapons:
+            if weapon and self.weapon_damage[weapon] > current_weapon:
+                self._action('switch-weapon', self.weapon_damage[weapon])
 
-    def get_angle_change(self,obj):
+    def get_angle_change(self, obj):
         angle = self.get_angle(obj)
         d_angle = angle - math.radians(self.get_position()['angle'])
         d_angle = abs(d_angle)
         d_angle = min(d_angle,2 * math.pi - d_angle)
         return d_angle
 
-    def get_angle(self,obj):
+    def get_angle(self, obj):
         player_coord = self.get_position()
         dx = obj['x'] - player_coord['x']
         dy = obj['y'] - player_coord['y']
@@ -101,7 +114,7 @@ class Player:
 
     def can_shoot(self, monster_id):
         player_id = str(self.get_id())
-        r = requests.get(self.url + '/api/world/los/'+ player_id +'/' + str(monster_id)) 
+        r = requests.get(self.url + '/api/world/los/'+ player_id +'/' + str(monster_id))
         try:
             return json.loads(r.text)['los']
         except KeyError:
