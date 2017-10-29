@@ -130,7 +130,10 @@ while True:
                 pass
 
     player.switch_weapon()
-    if len(monsters) > 0:
-        best_target, danger_dist = choose_target(player, monsters)
-        aim_n_shoot(player, best_target)
+    try:
+        if len(monsters) > 0:
+            best_target, danger_dist = choose_target(player, monsters)
+            aim_n_shoot(player, best_target)
+    except KeyError:
+        player = Player()
     door_timer = try_dooring(player, world, door_timer)
