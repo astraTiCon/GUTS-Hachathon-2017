@@ -80,12 +80,14 @@ def aim_n_shoot(player, target):
 def distance(a, b):
     return math.sqrt((a['x'] - b['x']) ** 2 + (a['y'] - b['y']) ** 2)
 
+
 def random_movement(n=4):
     for _ in range(n):
         choice([player.forward, player.backward, player.lstrafe, player.rstrafe])(20)
 
-def move_to(tar_type):
-    targets = list(world._get_pickups(tar_type, 200))
+
+def move_to(tar_type, dist=200):
+    targets = list(world._get_pickups(tar_type, dist))
     if not targets:
         return
 
@@ -95,14 +97,19 @@ def move_to(tar_type):
     player.right(math.degrees(angle))
     player.forward(40)
     new_pos = player.get_position()
+    sleep(.2)
     if distance(prev_pos, new_pos) < 50:
         random_movement()
+        return False
+    return True
+
 
 world = World()
 player = Player()
 door_open_threshold = 10
 door_timer = 0
 move_flag = False
+
 
 while True:
     monsters = list(filter(lambda x: player.can_shoot(x['id']),
@@ -111,9 +118,16 @@ while True:
     if shooot:
         continue
 
-    move_to('armor')
-    if player.get_health() < 38:
-        move_to('health')
+    if len(monsters) <= 0:
+        while move_to('armor'):
+            pass
+
+        while move_to('weapon', 500):
+            pass
+
+        if player.get_health() < 38:
+            while move_to('health'):
+                pass
 
     player.switch_weapon()
     if len(monsters) > 0:
